@@ -1,0 +1,88 @@
+<view class="products cx-page cx-safe-bottom">
+  <view class="products__toolbar">
+    <view class="products__search">
+      <input
+        class="products__search-input"
+        type="text"
+        placeholder="搜索名称 / SKU / 分类"
+        placeholder-class="products__ph"
+        value="{{q}}"
+        bindinput="onSearch"
+        confirm-type="search"
+      />
+    </view>
+    <view class="products__filters">
+      <view
+        class="products__chip {{statusFilter === 'all' ? 'is-active' : ''}}"
+        data-status="all"
+        bindtap="onFilter"
+      >全部</view>
+      <view
+        class="products__chip {{statusFilter === 'published' ? 'is-active' : ''}}"
+        data-status="published"
+        bindtap="onFilter"
+      >上架</view>
+      <view
+        class="products__chip {{statusFilter === 'draft' ? 'is-active' : ''}}"
+        data-status="draft"
+        bindtap="onFilter"
+      >下架</view>
+    </view>
+  </view>
+
+  <view class="products__meta">
+    <text class="cx-muted">共 {{filtered.length}} 件</text>
+    <button class="cx-btn cx-btn--primary cx-btn--sm" bindtap="onCreate">新建</button>
+  </view>
+
+  <view wx:if="{{loading}}" class="cx-empty">
+    <view class="cx-empty__title">加载中…</view>
+  </view>
+
+  <view wx:elif="{{!filtered.length}}" class="cx-empty">
+    <view class="cx-empty__title">暂无商品</view>
+    <view class="cx-empty__desc">调整筛选，或点击右上「新建」</view>
+  </view>
+
+  <view wx:else class="products__list">
+    <view class="cx-card" wx:for="{{filtered}}" wx:key="id">
+      <view class="row__head">
+        <view class="row__title-wrap">
+          <text class="row__name">{{item.name}}</text>
+          <text class="row__sku cx-muted">{{item.sku || '无 SKU'}} · {{item.category}}</text>
+        </view>
+        <text class="cx-badge {{item.is_published ? 'cx-badge--success' : 'cx-badge--warning'}}">
+          {{item.is_published ? '上架' : '下架'}}
+        </text>
+      </view>
+      <view class="row__stats">
+        <text class="cx-price">¥{{item.price}}</text>
+        <text class="cx-muted">库存 {{item.stock}}</text>
+        <text wx:if="{{item.badge}}" class="cx-badge cx-badge--accent">{{item.badge}}</text>
+      </view>
+      <view class="row__actions">
+        <button
+          class="cx-btn cx-btn--sm cx-btn--secondary"
+          data-id="{{item.id}}"
+          data-published="{{item.is_published}}"
+          bindtap="onTogglePublish"
+        >{{item.is_published ? '下架' : '上架'}}</button>
+        <button
+          class="cx-btn cx-btn--sm cx-btn--ghost"
+          data-id="{{item.id}}"
+          bindtap="onEdit"
+        >编辑</button>
+        <button
+          class="cx-btn cx-btn--sm cx-btn--danger"
+          data-id="{{item.id}}"
+          data-name="{{item.name}}"
+          bindtap="onDelete"
+        >删除</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="products__logout">
+    <button class="cx-btn cx-btn--ghost cx-btn--block" bindtap="onLogout">退出登录</button>
+  </view>
+</view>

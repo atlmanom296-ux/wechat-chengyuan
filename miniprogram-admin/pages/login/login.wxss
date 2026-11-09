@@ -1,0 +1,71 @@
+.login {
+  padding: 80rpx 40rpx 40rpx;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.login__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 48rpx;
+}
+
+.login__mark {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 28rpx;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 56rpx;
+  font-weight: 700;
+  line-height: 112rpx;
+  text-align: center;
+  margin-bottom: 24rpx;
+}
+
+.login__brand {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.login__tagline {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: var(--color-accent);
+  letter-spacing: 2rpx;
+}
+
+.login__sub {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+}
+
+.login__card {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  border: 2rpx solid var(--color-border);
+  padding: 40rpx 32rpx;
+}
+
+.login__ph {
+  color: var(--color-text-muted);
+}
+
+.login__hint {
+  display: block;
+  margin-top: 28rpx;
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.login__footer {
+  margin-top: auto;
+  padding-top: 48rpx;
+  text-align: center;
+  font-size: 22rpx;
+}

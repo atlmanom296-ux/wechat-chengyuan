@@ -1,0 +1,51 @@
+<view class="login cx-page">
+  <view class="login__hero">
+    <view class="login__mark">澄</view>
+    <text class="login__brand">澄选管理</text>
+    <text class="login__tagline">ChengXuan Admin</text>
+    <text class="login__sub">商品 CMS · 与 Web 后台共用 API</text>
+  </view>
+
+  <view class="login__card">
+    <view class="cx-field">
+      <text class="cx-field__label">用户名</text>
+      <input
+        class="cx-field__input"
+        type="text"
+        placeholder="admin"
+        placeholder-class="login__ph"
+        value="{{username}}"
+        bindinput="onUsername"
+      />
+    </view>
+    <view class="cx-field">
+      <text class="cx-field__label">密码</text>
+      <input
+        class="cx-field__input"
+        password="{{true}}"
+        placeholder="请输入密码"
+        placeholder-class="login__ph"
+        value="{{password}}"
+        bindinput="onPassword"
+        bindconfirm="onSubmit"
+      />
+    </view>
+
+    <text wx:if="{{error}}" class="cx-field__error">{{error}}</text>
+
+    <button
+      class="cx-btn cx-btn--primary cx-btn--block cx-btn--lg"
+      loading="{{loggingIn}}"
+      disabled="{{loggingIn}}"
+      bindtap="onSubmit"
+    >
+      登录
+    </button>
+
+    <text class="login__hint">默认账号见 .env.example（admin / change-me-please）。无支付、无订单。</text>
+  </view>
+
+  <view class="login__footer cx-safe-bottom">
+    <text class="cx-muted">澄选 ChengXuan · 管理端小程序</text>
+  </view>
+</view>

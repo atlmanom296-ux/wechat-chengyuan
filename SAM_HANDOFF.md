@@ -103,4 +103,10 @@ dept-store/
 
 **给 SamCode：** 用微信开发者工具打开 `miniprogram/`（`appid` 占位 `touristappid`）；将静态 `utils/products.js` 换成与 FastAPI `/api/products` 的请求；登录接 `wx.login`；详情主 CTA 保持非支付（心愿单/加购）。上线前将 SVG 占位图转为 PNG/WebP。
 
+## 管理端微信小程序（新增）
+
+路径：`./miniprogram-admin/`（独立 `app.json`，勿与用户端 `miniprogram/` 合并）。
+
+管理员用户名/密码登录后走已有 `POST /api/auth/login` 与 `/api/admin/products*`（商品 CRUD / 上下架）。默认占位 `admin` / `change-me-please`。详见 `miniprogram-admin/README.md`。
+
 **勿动：** 现有 `storefront/`、`admin/` HTML 壳与 `app/` FastAPI；勿碰 `/workspace/sub-webui/`。

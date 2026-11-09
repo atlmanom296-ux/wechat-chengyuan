@@ -54,3 +54,10 @@ JSON + Bearer admin auth. OpenAPI: `/docs`.
 - JWT `role=wx_user`, `sub=openid:{openid}` — distinct from admin CMS tokens.
 - Mock: `WX_MOCK_OPENID=1` (default) — no real AppID required.
 - Shell: `miniprogram/` (UI-PRO). See `miniprogram/README.md`.
+
+## WeChat admin mini program
+
+- Separate project: `miniprogram-admin/` (own `app.json`; do not merge with `miniprogram/`).
+- Uses **existing** admin endpoints above (`POST /api/auth/login`, `/api/admin/products*`). No new API.
+- Storage key `cx_admin_token` (admin JWT). Distinct from user mini program `cx_access_token` / `role=wx_user`.
+- See `miniprogram-admin/README.md`.

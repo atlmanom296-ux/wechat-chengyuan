@@ -1,0 +1,91 @@
+<view class="form cx-page cx-safe-bottom">
+  <view wx:if="{{loading}}" class="cx-empty">
+    <view class="cx-empty__title">加载中…</view>
+  </view>
+
+  <block wx:else>
+    <view class="form__section">
+      <text class="form__section-title">基本信息</text>
+      <view class="cx-field">
+        <text class="cx-field__label">商品名称 <text class="cx-field__req">*</text></text>
+        <input class="cx-field__input" value="{{form.name}}" data-key="name" bindinput="onInput" placeholder="名称" />
+      </view>
+      <view class="cx-field">
+        <text class="cx-field__label">SKU</text>
+        <input class="cx-field__input" value="{{form.sku}}" data-key="sku" bindinput="onInput" placeholder="CX-HM-001" />
+      </view>
+      <view class="cx-field">
+        <text class="cx-field__label">分类 <text class="cx-field__req">*</text></text>
+        <picker mode="selector" range="{{categories}}" value="{{categoryIndex}}" bindchange="onCategory">
+          <view class="cx-field__input form__picker">{{form.category || '选择分类'}}</view>
+        </picker>
+      </view>
+      <view class="cx-field">
+        <text class="cx-field__label">营销标签</text>
+        <input class="cx-field__input" value="{{form.badge}}" data-key="badge" bindinput="onInput" placeholder="热卖 / 新品 / 限时" />
+      </view>
+      <view class="cx-field">
+        <text class="cx-field__label">商品描述</text>
+        <textarea
+          class="cx-field__textarea"
+          value="{{form.description}}"
+          data-key="description"
+          bindinput="onInput"
+          placeholder="对外描述"
+          maxlength="2000"
+        />
+      </view>
+    </view>
+
+    <view class="form__section">
+      <text class="form__section-title">价格与库存</text>
+      <view class="cx-field">
+        <text class="cx-field__label">售价 (¥) <text class="cx-field__req">*</text></text>
+        <input class="cx-field__input" type="digit" value="{{form.price}}" data-key="price" bindinput="onInput" placeholder="0.00" />
+      </view>
+      <view class="cx-field">
+        <text class="cx-field__label">划线价 (¥)</text>
+        <input class="cx-field__input" type="digit" value="{{form.compare_at_price}}" data-key="compare_at_price" bindinput="onInput" placeholder="可选" />
+      </view>
+      <view class="cx-field">
+        <text class="cx-field__label">库存 <text class="cx-field__req">*</text></text>
+        <input class="cx-field__input" type="number" value="{{form.stock}}" data-key="stock" bindinput="onInput" placeholder="0" />
+      </view>
+    </view>
+
+    <view class="form__section">
+      <text class="form__section-title">媒体</text>
+      <view class="cx-field">
+        <text class="cx-field__label">封面 image_url</text>
+        <input class="cx-field__input" value="{{form.image_url}}" data-key="image_url" bindinput="onInput" placeholder="/assets/… 或 https://…" />
+        <text class="cx-field__hint">本期不接上传，填 URL 即可</text>
+      </view>
+      <image
+        wx:if="{{previewUrl}}"
+        class="form__preview"
+        src="{{previewUrl}}"
+        mode="aspectFill"
+      />
+    </view>
+
+    <view class="form__section form__section--row">
+      <view>
+        <text class="form__section-title">上架销售</text>
+        <text class="cx-muted form__switch-hint">对应 is_published / 前台可见</text>
+      </view>
+      <switch checked="{{form.is_published}}" color="#0F766E" bindchange="onPublished" />
+    </view>
+
+    <text wx:if="{{error}}" class="cx-field__error form__error">{{error}}</text>
+
+    <view class="form__actions">
+      <button class="cx-btn cx-btn--ghost" bindtap="onCancel">取消</button>
+      <button
+        class="cx-btn cx-btn--primary"
+        loading="{{saving}}"
+        disabled="{{saving}}"
+        bindtap="onSave"
+      >保存商品</button>
+    </view>
+  </block>
+</view>

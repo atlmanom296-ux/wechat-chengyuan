@@ -54,10 +54,15 @@ SQLite: `./data/store.db` (seeded with ChengXuan demo catalog when empty).
 - `DESIGN.md` / `COMPONENT_MAP.md` / `SAM_HANDOFF.md` — UI-PRO (preserve)
 - `HANDOFF.md` — Sam summary
 
-## WeChat mini program
+## WeChat mini programs
 
-Directory: `miniprogram/`. Import in 微信开发者工具; see `miniprogram/README.md`.
-Backend: `POST /api/wx/login`, `GET /api/wx/me` (mock openid via `WX_MOCK_OPENID=1`).
+| App | Directory | Docs |
+|-----|-----------|------|
+| 用户端（登录 + 商品列表/详情） | `miniprogram/` | `miniprogram/README.md` |
+| 管理端 CMS（登录 + 商品 CRUD） | `miniprogram-admin/` | `miniprogram-admin/README.md` |
+
+User backend: `POST /api/wx/login`, `GET /api/wx/me` (mock openid via `WX_MOCK_OPENID=1`).  
+Admin backend: existing `POST /api/auth/login` + `/api/admin/products*` (no new endpoints).
 
 ## Out of scope
 

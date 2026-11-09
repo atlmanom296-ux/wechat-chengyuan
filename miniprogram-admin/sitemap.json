@@ -1,0 +1,9 @@
+{
+  "desc": "澄选管理端小程序 sitemap",
+  "rules": [
+    {
+      "action": "allow",
+      "page": "*"
+    }
+  ]
+}
