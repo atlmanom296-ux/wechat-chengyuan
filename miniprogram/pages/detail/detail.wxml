@@ -1,0 +1,100 @@
+<view class="detail cx-page" wx:if="{{product}}">
+  <swiper
+    class="detail__gallery"
+    indicator-dots
+    indicator-color="rgba(26,26,24,0.2)"
+    indicator-active-color="#0F766E"
+    circular
+  >
+    <swiper-item wx:for="{{gallery}}" wx:key="*this">
+      <image class="detail__img" src="{{item}}" mode="aspectFit" />
+    </swiper-item>
+  </swiper>
+
+  <view class="detail__panel">
+    <view class="detail__badges" wx:if="{{product.badges.length}}">
+      <text class="cx-badge cx-badge--accent" wx:for="{{product.badges}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="detail__name">{{product.name}}</view>
+    <view class="detail__sku cx-muted" wx:if="{{product.sku}}">SKU {{product.sku}} · {{product.category}}</view>
+    <view class="detail__price-row">
+      <price-tag amount="{{product.price}}" compare-at="{{product.compareAtPrice}}" size="lg" />
+    </view>
+    <view class="detail__stock detail__stock--{{stockTone}}">{{stockText}}</view>
+  </view>
+
+  <view class="detail__section" wx:if="{{product.specs && product.specs.length}}">
+    <view class="detail__section-title">规格</view>
+    <block wx:for="{{product.specs}}" wx:key="id">
+      <view class="detail__spec-label">{{item.label}}</view>
+      <view class="detail__specs">
+        <view
+          wx:for="{{item.options}}"
+          wx:for-item="opt"
+          wx:key="id"
+          class="detail__pill {{selectedSpecs[item.id] === opt.id ? 'is-active' : ''}} {{opt.disabled ? 'is-disabled' : ''}}"
+          data-spec="{{item.id}}"
+          data-opt="{{opt.id}}"
+          data-disabled="{{opt.disabled}}"
+          bindtap="onSelectSpec"
+        >{{opt.label}}</view>
+      </view>
+    </block>
+  </view>
+
+  <view class="detail__section">
+    <view class="detail__section-title">数量</view>
+    <qty-stepper value="{{qty}}" min="{{1}}" max="{{qtyMax}}" bind:change="onQty" />
+  </view>
+
+  <view class="detail__section" wx:if="{{product.highlights && product.highlights.length}}">
+    <view class="detail__section-title">卖点</view>
+    <view class="detail__highlights">
+      <text class="detail__chip" wx:for="{{product.highlights}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+
+  <view class="detail__section">
+    <view class="detail__section-title">详情</view>
+    <text class="detail__desc">{{product.description || '暂无描述'}}</text>
+  </view>
+
+  <view class="detail__section" wx:if="{{related.length}}">
+    <view class="detail__section-title">相关推荐</view>
+    <scroll-view scroll-x class="detail__related" enable-flex>
+      <view class="detail__related-item" wx:for="{{related}}" wx:key="id">
+        <product-card
+          product-id="{{item.id}}"
+          name="{{item.name}}"
+          cover="{{item.cover}}"
+          price="{{item.price}}"
+          compare-at-price="{{item.compareAtPrice}}"
+          badge="{{item.badges[0]}}"
+          stock="{{item.stock}}"
+          category="{{item.category}}"
+          sku="{{item.sku}}"
+          bind:open="onOpenRelated"
+        />
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="detail__spacer" />
+
+  <view class="detail__bar cx-safe-bottom">
+    <button class="cx-btn cx-btn--ghost detail__fav" bindtap="onFav">收藏</button>
+    <button
+      class="cx-btn cx-btn--primary detail__cta"
+      disabled="{{product.stock <= 0}}"
+      bindtap="onWishlist"
+    >加入心愿单（非支付）</button>
+  </view>
+</view>
+
+<view class="cx-empty" wx:elif="{{loading}}">
+  <view class="cx-empty__title">加载中…</view>
+</view>
+<view class="cx-empty" wx:else>
+  <view class="cx-empty__title">未找到商品</view>
+  <view class="cx-empty__desc">{{error || '请返回列表重试'}}</view>
+</view>

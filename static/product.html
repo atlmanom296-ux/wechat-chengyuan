@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>商品详情</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <strong><a href="/">← 百货商品站</a></strong>
+    <nav><a href="/admin/">后台管理</a></nav>
+  </header>
+  <main>
+    <p id="status" class="meta">加载中…</p>
+    <div id="detail" class="detail hidden"></div>
+  </main>
+  <script src="/static/app.js"></script>
+  <script>
+    const id = qs("id");
+    const statusEl = document.getElementById("status");
+    const detail = document.getElementById("detail");
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
+    }
+
+    async function load() {
+      if (!id) {
+        statusEl.textContent = "缺少商品 id";
+        return;
+      }
+      try {
+        const p = await api("/api/products/" + id);
+        document.title = p.name;
+        statusEl.classList.add("hidden");
+        detail.classList.remove("hidden");
+        detail.innerHTML = `
+          <div>
+            <img src="${p.image_url || "https://picsum.photos/seed/placeholder/600/600"}" alt="" />
+          </div>
+          <div>
+            <h1>${escapeHtml(p.name)}</h1>
+            <p class="price" style="font-size:1.4rem">${money(p.price)}</p>
+            <p class="meta">分类：${escapeHtml(p.category)} · 库存：${p.stock}</p>
+            <p class="meta">商品 ID：${p.id}</p>
+          </div>
+        `;
+      } catch (e) {
+        statusEl.textContent = "无法打开商品：" + e.message;
+      }
+    }
+    load();
+  </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>澄选 UI Shell · Preview Hub</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <style>
+    .hub { max-width: 720px; margin: 64px auto; padding: 0 24px; }
+    .hub h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.03em; }
+    .hub .tag { color: var(--color-text-secondary); margin: 8px 0 32px; }
+    .hub-card {
+      display: block;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      transition: box-shadow 150ms ease, border-color 150ms ease;
+    }
+    .hub-card:hover { box-shadow: var(--shadow-md); border-color: var(--color-accent); }
+    .hub-card strong { display: block; font-size: 16px; margin-bottom: 4px; }
+    .hub-card span { font-size: 13px; color: var(--color-text-secondary); }
+    .hub-docs { margin-top: 32px; font-size: 13px; color: var(--color-text-secondary); }
+    .hub-docs a { color: var(--color-accent); margin-right: 12px; }
+  </style>
+</head>
+<body>
+  <div class="hub">
+    <a class="cx-logo" href="index.html" style="margin-bottom:24px;display:inline-flex;">
+      <img src="assets/logo-mark.svg" alt="" width="32" height="32" />
+      澄选 ChengXuan
+    </a>
+    <h1>UI Shell 预览入口</h1>
+    <p class="tag">精选日常 · 澄净所见 — UI-PRO 壳已接 FastAPI（uvicorn 启动后访问）</p>
+    <a class="hub-card" href="/storefront/list.html">
+      <strong>前台 · 商品列表</strong>
+      <span>storefront/list.html — 筛选 chips、网格卡片、分页</span>
+    </a>
+    <a class="hub-card" href="/storefront/detail.html">
+      <strong>前台 · 商品详情</strong>
+      <span>storefront/detail.html — 图集、规格、数量步进</span>
+    </a>
+    <a class="hub-card" href="/admin/products.html">
+      <strong>后台 · 商品列表</strong>
+      <span>admin/products.html — AdminShell + 表格</span>
+    </a>
+    <a class="hub-card" href="/admin/login.html">
+      <strong>后台 · 登录</strong>
+      <span>admin/login.html — JWT 管理员登录</span>
+    </a>
+    <a class="hub-card" href="/admin/product-form.html">
+      <strong>后台 · 新建/编辑表单</strong>
+      <span>admin/product-form.html — 分区表单 + 底栏操作</span>
+    </a>
+    <p class="hub-docs">
+      <a href="DESIGN.md">DESIGN.md</a>
+      <a href="COMPONENT_MAP.md">COMPONENT_MAP.md</a>
+      <a href="SAM_HANDOFF.md">SAM_HANDOFF.md</a>
+      <a href="FILE_LIST.md">FILE_LIST.md</a>
+      <a href="/docs">OpenAPI /docs</a>
+      <a href="API_CONTRACT.md">API_CONTRACT.md</a>
+    </p>
+  </div>
+</body>
+</html>

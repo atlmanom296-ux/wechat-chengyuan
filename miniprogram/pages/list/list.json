@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "澄选 · 精选日常",
+  "usingComponents": {
+    "filter-chips": "/components/filter-chips/filter-chips",
+    "product-card": "/components/product-card/product-card"
+  }
+}

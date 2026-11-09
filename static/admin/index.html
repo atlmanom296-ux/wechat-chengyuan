@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>后台管理 · 百货商品站</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <strong>后台管理</strong>
+    <nav>
+      <a href="/">前台</a>
+      <button id="logoutBtn" type="button" class="secondary hidden">退出</button>
+    </nav>
+  </header>
+  <main>
+    <section id="loginSection">
+      <h1>管理员登录</h1>
+      <form id="loginForm" class="form">
+        <label>用户名 <input name="username" required autocomplete="username" /></label>
+        <label>密码 <input name="password" type="password" required autocomplete="current-password" /></label>
+        <button type="submit">登录</button>
+        <p id="loginError" class="error hidden"></p>
+      </form>
+    </section>
+
+    <section id="adminSection" class="hidden">
+      <h1>商品管理</h1>
+      <div class="toolbar">
+        <button id="refreshBtn" type="button" class="secondary">刷新</button>
+        <button id="newBtn" type="button">新建商品</button>
+      </div>
+      <p id="adminStatus" class="meta"></p>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>名称</th><th>价格</th><th>库存</th><th>分类</th><th>上架</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+
+      <h2 id="formTitle" style="margin-top:1.5rem">新建 / 编辑</h2>
+      <form id="productForm" class="form">
+        <input type="hidden" name="id" />
+        <label>名称 <input name="name" required /></label>
+        <label>价格 <input name="price" type="number" step="0.01" min="0" required /></label>
+        <label>库存 <input name="stock" type="number" min="0" required /></label>
+        <label>分类 <input name="category" required /></label>
+        <label>图片 URL <input name="image_url" placeholder="https://..." /></label>
+        <label><input name="is_published" type="checkbox" /> 上架</label>
+        <div class="toolbar">
+          <button type="submit">保存</button>
+          <button type="button" id="resetForm" class="secondary">清空</button>
+        </div>
+        <p id="formError" class="error hidden"></p>
+      </form>
+    </section>
+  </main>
+  <script src="/static/app.js"></script>
+  <script>
+    const TOKEN_KEY = "dept_store_admin_token";
+    const loginSection = document.getElementById("loginSection");
+    const adminSection = document.getElementById("adminSection");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const tbody = document.getElementById("tbody");
+    const form = document.getElementById("productForm");
+    const formError = document.getElementById("formError");
+    const loginError = document.getElementById("loginError");
+    const adminStatus = document.getElementById("adminStatus");
+
+    function token() { return localStorage.getItem(TOKEN_KEY); }
+    function authHeaders() {
+      const t = token();
+      return t ? { Authorization: "Bearer " + t } : {};
+    }
+    function showAdmin(on) {
+      loginSection.classList.toggle("hidden", on);
+      adminSection.classList.toggle("hidden", !on);
+      logoutBtn.classList.toggle("hidden", !on);
+    }
+
+    async function adminApi(path, options = {}) {
+      options.headers = Object.assign({}, authHeaders(), options.headers || {});
+      return api(path, options);
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
+    }
+
+    async function loadProducts() {
+      adminStatus.textContent = "加载中…";
+      try {
+        const items = await adminApi("/api/admin/products");
+        adminStatus.textContent = `共 ${items.length} 条`;
+        tbody.innerHTML = items.map((p) => `
+          <tr>
+            <td>${p.id}</td>
+            <td>${escapeHtml(p.name)}</td>
+            <td>${money(p.price)}</td>
+            <td>${p.stock}</td>
+            <td>${escapeHtml(p.category)}</td>
+            <td><span class="badge ${p.is_published ? "on" : "off"}">${p.is_published ? "上架" : "下架"}</span></td>
+            <td>
+              <button type="button" data-edit="${p.id}">编辑</button>
+              <button type="button" class="secondary" data-toggle="${p.id}" data-pub="${p.is_published}">${p.is_published ? "下架" : "上架"}</button>
+              <button type="button" class="danger" data-del="${p.id}">删除</button>
+            </td>
+          </tr>
+        `).join("");
+        window.__products = items;
+      } catch (e) {
+        adminStatus.textContent = "加载失败：" + e.message;
+        if (/401|Not authenticated|Invalid|expired/i.test(e.message)) {
+          localStorage.removeItem(TOKEN_KEY);
+          showAdmin(false);
+        }
+      }
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      loginError.classList.add("hidden");
+      const fd = new FormData(ev.target);
+      try {
+        const data = await api("/api/auth/login", {
+          method: "POST",
+          body: { username: fd.get("username"), password: fd.get("password") },
+        });
+        localStorage.setItem(TOKEN_KEY, data.access_token);
+        showAdmin(true);
+        loadProducts();
+      } catch (e) {
+        loginError.textContent = e.message;
+        loginError.classList.remove("hidden");
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      try { await api("/api/auth/logout", { method: "POST" }); } catch (_) {}
+      localStorage.removeItem(TOKEN_KEY);
+      showAdmin(false);
+    });
+
+    document.getElementById("refreshBtn").addEventListener("click", loadProducts);
+    document.getElementById("newBtn").addEventListener("click", () => {
+      form.reset();
+      form.id.value = "";
+      document.getElementById("formTitle").textContent = "新建商品";
+    });
+    document.getElementById("resetForm").addEventListener("click", () => {
+      form.reset();
+      form.id.value = "";
+    });
+
+    tbody.addEventListener("click", async (ev) => {
+      const btn = ev.target.closest("button");
+      if (!btn) return;
+      if (btn.dataset.edit) {
+        const p = (window.__products || []).find((x) => String(x.id) === btn.dataset.edit);
+        if (!p) return;
+        form.id.value = p.id;
+        form.name.value = p.name;
+        form.price.value = p.price;
+        form.stock.value = p.stock;
+        form.category.value = p.category;
+        form.image_url.value = p.image_url || "";
+        form.is_published.checked = !!p.is_published;
+        document.getElementById("formTitle").textContent = "编辑商品 #" + p.id;
+      } else if (btn.dataset.toggle) {
+        try {
+          await adminApi(`/api/admin/products/${btn.dataset.toggle}/publish`, {
+            method: "PATCH",
+            body: { is_published: btn.dataset.pub !== "true" },
+          });
+          loadProducts();
+        } catch (e) { alert(e.message); }
+      } else if (btn.dataset.del) {
+        if (!confirm("确认删除 #" + btn.dataset.del + "？")) return;
+        try {
+          await adminApi(`/api/admin/products/${btn.dataset.del}`, { method: "DELETE" });
+          loadProducts();
+        } catch (e) { alert(e.message); }
+      }
+    });
+
+    form.addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      formError.classList.add("hidden");
+      const id = form.id.value;
+      const body = {
+        name: form.name.value.trim(),
+        price: Number(form.price.value),
+        stock: Number(form.stock.value),
+        category: form.category.value.trim(),
+        image_url: form.image_url.value.trim() || null,
+        is_published: form.is_published.checked,
+      };
+      try {
+        if (id) {
+          await adminApi(`/api/admin/products/${id}`, { method: "PUT", body });
+        } else {
+          await adminApi("/api/admin/products", { method: "POST", body });
+        }
+        form.reset();
+        form.id.value = "";
+        document.getElementById("formTitle").textContent = "新建 / 编辑";
+        loadProducts();
+      } catch (e) {
+        formError.textContent = e.message;
+        formError.classList.remove("hidden");
+      }
+    });
+
+    if (token()) {
+      showAdmin(true);
+      loadProducts();
+    }
+  </script>
+</body>
+</html>

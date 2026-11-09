@@ -1,0 +1,10 @@
+<view class="brand brand--{{size}}">
+  <view class="brand__mark" aria-hidden="true">
+    <view class="brand__bar"></view>
+    <view class="brand__bar brand__bar--short"></view>
+  </view>
+  <view class="brand__text" wx:if="{{showText}}">
+    <text class="brand__name">{{name}}</text>
+    <text class="brand__tagline" wx:if="{{showTagline}}">{{tagline}}</text>
+  </view>
+</view>

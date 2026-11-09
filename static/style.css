@@ -1,0 +1,92 @@
+/* Minimal utilitarian styles — UI-PRO will replace */
+:root {
+  --bg: #f6f7f9;
+  --card: #fff;
+  --text: #1a1a1a;
+  --muted: #666;
+  --border: #ddd;
+  --accent: #2563eb;
+  --danger: #b91c1c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+header {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+header a { color: var(--accent); text-decoration: none; }
+main { max-width: 960px; margin: 1.5rem auto; padding: 0 1rem; }
+h1 { font-size: 1.4rem; margin: 0 0 1rem; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.card img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background: #eee;
+}
+.card .body { padding: 0.75rem; flex: 1; }
+.card .price { font-weight: 600; color: var(--accent); }
+.card a { color: inherit; text-decoration: none; }
+.meta { color: var(--muted); font-size: 0.85rem; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+input, select, button, textarea {
+  font: inherit;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+button, .btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding: 0.45rem 0.8rem;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+}
+button.secondary { background: #64748b; }
+button.danger { background: var(--danger); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+table { width: 100%; border-collapse: collapse; background: var(--card); }
+th, td { border: 1px solid var(--border); padding: 0.5rem; text-align: left; font-size: 0.9rem; }
+th { background: #f1f5f9; }
+.form { display: grid; gap: 0.6rem; max-width: 420px; }
+.form label { display: grid; gap: 0.25rem; font-size: 0.9rem; }
+.error { color: var(--danger); margin: 0.5rem 0; }
+.hidden { display: none !important; }
+.detail { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 640px) { .detail { grid-template-columns: 1fr; } }
+.detail img { width: 100%; border-radius: 8px; background: #eee; }
+.badge {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  background: #e2e8f0;
+}
+.badge.on { background: #bbf7d0; }
+.badge.off { background: #fecaca; }

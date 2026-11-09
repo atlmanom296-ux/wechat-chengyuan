@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>百货商品站</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <strong>百货商品站</strong>
+    <nav><a href="/admin/">后台管理</a></nav>
+  </header>
+  <main>
+    <h1>商品列表</h1>
+    <div class="toolbar">
+      <input id="q" type="search" placeholder="搜索名称" />
+      <input id="category" type="text" placeholder="分类筛选" />
+      <button id="searchBtn" type="button">搜索</button>
+    </div>
+    <p id="status" class="meta">加载中…</p>
+    <div id="grid" class="grid"></div>
+  </main>
+  <script src="/static/app.js"></script>
+  <script>
+    const grid = document.getElementById("grid");
+    const statusEl = document.getElementById("status");
+
+    async function load() {
+      const q = document.getElementById("q").value.trim();
+      const category = document.getElementById("category").value.trim();
+      const params = new URLSearchParams();
+      if (q) params.set("q", q);
+      if (category) params.set("category", category);
+      statusEl.textContent = "加载中…";
+      try {
+        const items = await api("/api/products" + (params.toString() ? "?" + params : ""));
+        statusEl.textContent = `共 ${items.length} 件上架商品`;
+        grid.innerHTML = items.map((p) => `
+          <article class="card">
+            <a href="/product.html?id=${p.id}">
+              <img src="${p.image_url || "https://picsum.photos/seed/placeholder/400/400"}" alt="" />
+              <div class="body">
+                <div>${escapeHtml(p.name)}</div>
+                <div class="price">${money(p.price)}</div>
+                <div class="meta">${escapeHtml(p.category)} · 库存 ${p.stock}</div>
+              </div>
+            </a>
+          </article>
+        `).join("") || "<p class='meta'>暂无商品</p>";
+      } catch (e) {
+        statusEl.textContent = "加载失败：" + e.message;
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
+    }
+
+    document.getElementById("searchBtn").addEventListener("click", load);
+    load();
+  </script>
+</body>
+</html>

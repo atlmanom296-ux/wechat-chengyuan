@@ -1,0 +1,9 @@
+{
+  "desc": "澄选小程序 sitemap（壳层默认全允许）",
+  "rules": [
+    {
+      "action": "allow",
+      "page": "*"
+    }
+  ]
+}

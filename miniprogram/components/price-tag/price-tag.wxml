@@ -1,0 +1,6 @@
+<view class="price price--{{size}}">
+  <text class="price__currency">¥</text>
+  <text class="price__amount">{{displayAmount}}</text>
+  <text class="price__compare" wx:if="{{compareAt}}">¥{{displayCompare}}</text>
+  <text class="price__suffix" wx:if="{{suffix}}">{{suffix}}</text>
+</view>

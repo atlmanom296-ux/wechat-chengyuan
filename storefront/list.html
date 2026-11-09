@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>商品列表 · 澄选 ChengXuan</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <header class="cx-header">
+    <div class="cx-container cx-header__inner">
+      <a class="cx-logo" href="/storefront/list.html">
+        <img src="/assets/logo-mark.svg" alt="" />
+        澄选
+      </a>
+      <nav class="cx-nav" aria-label="主导航">
+        <a href="/storefront/list.html" class="is-active">首页</a>
+        <a href="/storefront/list.html">分类</a>
+        <a href="#" aria-disabled="true">品牌馆</a>
+      </nav>
+      <div class="cx-header__search">
+        <label class="cx-search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+          <input id="search-input" type="search" placeholder="搜索商品、分类…" aria-label="搜索商品" />
+        </label>
+      </div>
+      <button class="cx-cart-btn" type="button" aria-label="购物车（占位）" title="购物车（壳层占位，无结算）">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M6 6L5 3H2"/></svg>
+        <span class="cx-cart-btn__count">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="cx-page">
+    <div class="cx-container">
+      <nav class="cx-breadcrumb" aria-label="面包屑">
+        <a href="/storefront/list.html">首页</a>
+        <span class="cx-breadcrumb__sep">/</span>
+        <span id="crumb-label">全部商品</span>
+      </nav>
+
+      <div class="cx-page-header">
+        <div>
+          <h1>精选日常好物</h1>
+          <p>共 <strong id="result-count">0</strong> 件商品 · 澄净所见</p>
+        </div>
+      </div>
+
+      <div class="cx-filter-bar" id="filter-bar">
+        <div class="cx-filter-bar__chips" role="group" aria-label="分类筛选">
+          <button type="button" class="cx-chip is-active" data-cat="all">全部</button>
+          <button type="button" class="cx-chip" data-cat="家居">家居</button>
+          <button type="button" class="cx-chip" data-cat="个护">个护</button>
+          <button type="button" class="cx-chip" data-cat="数码">数码</button>
+          <button type="button" class="cx-chip" data-cat="服饰">服饰</button>
+          <button type="button" class="cx-chip" data-cat="食品">食品</button>
+        </div>
+        <div class="cx-filter-bar__sort">
+          <label for="sort">排序</label>
+          <select id="sort">
+            <option value="default">综合</option>
+            <option value="price_asc">价格从低到高</option>
+            <option value="price_desc">价格从高到低</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="cx-product-grid" id="product-grid"></div>
+      <p id="list-status" class="cx-muted" style="margin-top:16px;font-size:13px;">加载中…</p>
+    </div>
+  </main>
+
+  <footer class="cx-footer">
+    <div class="cx-container">
+      <div class="cx-footer__grid">
+        <div class="cx-footer__brand">
+          <strong>澄选 ChengXuan</strong>
+          精选日常 · 澄净所见。把真正好用的百货带到桌前。
+        </div>
+        <div>
+          <h4>购物指南</h4>
+          <a href="#">配送说明</a>
+          <a href="#">退换货政策</a>
+          <a href="#">常见问题</a>
+        </div>
+        <div>
+          <h4>关于澄选</h4>
+          <a href="#">品牌故事</a>
+          <a href="#">联系我们</a>
+        </div>
+        <div>
+          <h4>商家</h4>
+          <a href="/admin/products.html">后台管理</a>
+        </div>
+      </div>
+      <p class="cx-footer__copy">© 2026 澄选 ChengXuan · 无真实交易 / 无支付</p>
+    </div>
+  </footer>
+
+  <script src="/assets/js/api.js"></script>
+  <script>
+    (function () {
+      var state = { cat: "all", q: CX.qs("q") || "", sort: "default", items: [] };
+      if (state.q) document.getElementById("search-input").value = state.q;
+      var grid = document.getElementById("product-grid");
+      var countEl = document.getElementById("result-count");
+      var statusEl = document.getElementById("list-status");
+      var crumb = document.getElementById("crumb-label");
+
+      function renderCard(p) {
+        var soldout = Number(p.stock) <= 0;
+        var badge = p.badge
+          ? '<span class="cx-badge cx-badge--accent cx-card__badge">' + CX.escapeHtml(p.badge) + "</span>"
+          : "";
+        var compare = p.compare_at_price != null
+          ? '<span class="cx-price__compare">¥' + CX.escapeHtml(CX.money(p.compare_at_price)) + "</span>"
+          : "";
+        var soldOverlay = soldout ? '<div class="cx-card__soldout">售罄</div>' : "";
+        var btn = soldout
+          ? '<button type="button" class="cx-btn cx-btn--secondary cx-btn--sm" disabled>售罄</button>'
+          : '<button type="button" class="cx-btn cx-btn--secondary cx-btn--sm" onclick="event.preventDefault()" title="购物车占位">加购</button>';
+        return (
+          '<a class="cx-card" href="/storefront/detail.html?id=' + p.id + '" data-cat="' + CX.escapeHtml(p.category) + '" data-price="' + CX.escapeHtml(p.price) + '">' +
+            '<div class="cx-card__media">' +
+              '<img src="' + CX.escapeHtml(CX.coverUrl(p)) + '" alt="' + CX.escapeHtml(p.name) + '" />' +
+              badge + soldOverlay +
+            "</div>" +
+            '<div class="cx-card__body">' +
+              '<h2 class="cx-card__title">' + CX.escapeHtml(p.name) + "</h2>" +
+              '<p class="cx-card__meta">' + CX.escapeHtml(p.category) + (p.sku ? " · SKU " + CX.escapeHtml(p.sku) : "") + "</p>" +
+              '<div class="cx-card__footer">' +
+                '<span class="cx-price cx-price--sm"><span class="cx-price__currency">¥</span><span class="cx-price__amount">' +
+                  CX.escapeHtml(CX.money(p.price)) + "</span>" + compare + "</span>" +
+                btn +
+              "</div>" +
+            "</div>" +
+          "</a>"
+        );
+      }
+
+      function applyLocal() {
+        var items = state.items.slice();
+        if (state.sort === "price_asc") items.sort(function (a, b) { return Number(a.price) - Number(b.price); });
+        if (state.sort === "price_desc") items.sort(function (a, b) { return Number(b.price) - Number(a.price); });
+        countEl.textContent = String(items.length);
+        crumb.textContent = state.cat === "all" ? "全部商品" : state.cat;
+        if (!items.length) {
+          grid.innerHTML = "";
+          statusEl.textContent = "暂无商品，换个关键词试试。";
+          return;
+        }
+        statusEl.textContent = "";
+        grid.innerHTML = items.map(renderCard).join("");
+      }
+
+      async function load() {
+        statusEl.textContent = "加载中…";
+        var params = new URLSearchParams();
+        if (state.cat && state.cat !== "all") params.set("category", state.cat);
+        if (state.q) params.set("q", state.q);
+        try {
+          state.items = await CX.api("/api/products" + (params.toString() ? "?" + params : ""));
+          applyLocal();
+        } catch (e) {
+          statusEl.textContent = "加载失败：" + e.message;
+        }
+      }
+
+      document.querySelectorAll(".cx-chip").forEach(function (chip) {
+        chip.addEventListener("click", function () {
+          document.querySelectorAll(".cx-chip").forEach(function (c) { c.classList.remove("is-active"); });
+          chip.classList.add("is-active");
+          state.cat = chip.getAttribute("data-cat");
+          load();
+        });
+      });
+      document.getElementById("sort").addEventListener("change", function (ev) {
+        state.sort = ev.target.value;
+        applyLocal();
+      });
+      var search = document.getElementById("search-input");
+      var timer = null;
+      search.addEventListener("input", function () {
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+          state.q = search.value.trim();
+          load();
+        }, 250);
+      });
+
+      load();
+    })();
+  </script>
+</body>
+</html>

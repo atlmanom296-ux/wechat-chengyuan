@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>商品管理 · 澄选后台</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <div class="cx-admin">
+    <aside class="cx-admin__sidebar">
+      <div class="cx-admin__brand">
+        <img src="/assets/logo-mark.svg" alt="" />
+        <div>澄选后台<span>ChengXuan Admin</span></div>
+      </div>
+      <nav class="cx-admin__nav" aria-label="后台导航">
+        <a href="/admin/products.html" class="is-active">商品管理</a>
+        <a href="#" class="is-disabled" title="本期不做">订单（占位）</a>
+        <a href="#" class="is-disabled" title="本期不做">设置（占位）</a>
+        <a href="/storefront/list.html">查看前台 →</a>
+      </nav>
+    </aside>
+
+    <div class="cx-admin__main">
+      <header class="cx-admin__topbar">
+        <div class="cx-admin__topbar-title">商品 / 列表</div>
+        <div class="cx-admin__user">
+          <span class="cx-admin__avatar">管</span>
+          <span id="user-label">管理员</span>
+          <button type="button" class="cx-btn cx-btn--ghost cx-btn--sm" id="logout-btn" style="margin-left:8px;">退出</button>
+        </div>
+      </header>
+
+      <div class="cx-admin__content">
+        <div class="cx-page-header">
+          <div>
+            <h1>商品管理</h1>
+            <p>维护上架商品、库存与价格。数据来自 FastAPI。</p>
+          </div>
+        </div>
+
+        <div class="cx-toolbar">
+          <label class="cx-search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+            <input id="q" type="search" placeholder="搜索名称 / SKU" aria-label="搜索商品" />
+          </label>
+          <select id="status-filter" aria-label="状态筛选">
+            <option value="all">全部状态</option>
+            <option value="active">上架</option>
+            <option value="draft">草稿 / 下架</option>
+          </select>
+          <select id="cat-filter" aria-label="分类筛选">
+            <option value="all">全部分类</option>
+            <option>家居</option>
+            <option>个护</option>
+            <option>数码</option>
+            <option>服饰</option>
+            <option>食品</option>
+          </select>
+          <div class="cx-toolbar__spacer"></div>
+          <a class="cx-btn cx-btn--primary" href="/admin/product-form.html">+ 新建商品</a>
+        </div>
+
+        <p id="admin-status" class="cx-muted" style="font-size:13px;margin:8px 0;">加载中…</p>
+
+        <div class="cx-table-wrap">
+          <table class="cx-table">
+            <thead>
+              <tr>
+                <th>商品</th>
+                <th>分类</th>
+                <th>价格</th>
+                <th>库存</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script>
+    (function () {
+      if (!CX.requireAdmin()) return;
+      var all = [];
+      var tbody = document.getElementById("tbody");
+      var statusEl = document.getElementById("admin-status");
+
+      function stockCell(stock) {
+        stock = Number(stock);
+        if (stock <= 0) return '<span class="cx-badge cx-badge--danger">0</span>';
+        if (stock <= 10) return '<span class="cx-badge cx-badge--warning">' + stock + "</span>";
+        return String(stock);
+      }
+
+      function render() {
+        var q = document.getElementById("q").value.trim().toLowerCase();
+        var st = document.getElementById("status-filter").value;
+        var cat = document.getElementById("cat-filter").value;
+        var items = all.filter(function (p) {
+          if (st === "active" && !p.is_published) return false;
+          if (st === "draft" && p.is_published) return false;
+          if (cat !== "all" && p.category !== cat) return false;
+          if (q) {
+            var hay = ((p.name || "") + " " + (p.sku || "")).toLowerCase();
+            if (hay.indexOf(q) === -1) return false;
+          }
+          return true;
+        });
+        statusEl.textContent = "共 " + items.length + " / " + all.length + " 条";
+        tbody.innerHTML = items.map(function (p) {
+          return (
+            "<tr>" +
+              "<td><div class=\"cx-table__product\">" +
+                '<img class="cx-table__thumb" src="' + CX.escapeHtml(CX.coverUrl(p)) + '" alt="" />' +
+                "<div><div class=\"cx-table__name\">" + CX.escapeHtml(p.name) + "</div>" +
+                '<div class="cx-table__sku">' + CX.escapeHtml(p.sku || ("#" + p.id)) + "</div></div>" +
+              "</div></td>" +
+              "<td>" + CX.escapeHtml(p.category) + "</td>" +
+              '<td><span class="cx-price cx-price--sm"><span class="cx-price__currency">¥</span><span class="cx-price__amount">' +
+                CX.escapeHtml(CX.money(p.price)) + "</span></span></td>" +
+              "<td>" + stockCell(p.stock) + "</td>" +
+              '<td><span class="' + CX.statusBadgeClass(p) + '">' + CX.statusLabel(p) + "</span></td>" +
+              '<td><div class="cx-table__actions">' +
+                '<a href="/admin/product-form.html?id=' + p.id + '">编辑</a>' +
+                '<button type="button" data-toggle="' + p.id + '" data-pub="' + (p.is_published ? "1" : "0") + '">' +
+                  (p.is_published ? "下架" : "上架") + "</button>" +
+                '<button type="button" class="is-danger" data-del="' + p.id + '">删除</button>' +
+              "</div></td>" +
+            "</tr>"
+          );
+        }).join("") || '<tr><td colspan="6" class="cx-muted">暂无商品</td></tr>';
+      }
+
+      async function load() {
+        statusEl.textContent = "加载中…";
+        try {
+          all = await CX.api("/api/admin/products", { auth: true });
+          render();
+        } catch (e) {
+          if (e.status === 401) {
+            CX.setToken(null);
+            CX.requireAdmin();
+            return;
+          }
+          statusEl.textContent = "加载失败：" + e.message;
+        }
+      }
+
+      tbody.addEventListener("click", async function (ev) {
+        var btn = ev.target.closest("button");
+        if (!btn) return;
+        if (btn.dataset.toggle) {
+          try {
+            await CX.api("/api/admin/products/" + btn.dataset.toggle + "/publish", {
+              method: "PATCH",
+              auth: true,
+              body: { is_published: btn.dataset.pub !== "1" },
+            });
+            load();
+          } catch (e) { alert(e.message); }
+        } else if (btn.dataset.del) {
+          if (!confirm("确认删除 #" + btn.dataset.del + "？")) return;
+          try {
+            await CX.api("/api/admin/products/" + btn.dataset.del, { method: "DELETE", auth: true });
+            load();
+          } catch (e) { alert(e.message); }
+        }
+      });
+
+      ["q", "status-filter", "cat-filter"].forEach(function (id) {
+        document.getElementById(id).addEventListener("input", render);
+        document.getElementById(id).addEventListener("change", render);
+      });
+
+      document.getElementById("logout-btn").addEventListener("click", async function () {
+        try { await CX.api("/api/auth/logout", { method: "POST" }); } catch (e) {}
+        CX.setToken(null);
+        location.href = "/admin/login.html";
+      });
+
+      load();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+<view class="stepper">
+  <view class="stepper__btn {{value <= min ? 'is-disabled' : ''}}" data-delta="-1" bindtap="onChange">−</view>
+  <text class="stepper__val">{{value}}</text>
+  <view class="stepper__btn {{value >= max ? 'is-disabled' : ''}}" data-delta="1" bindtap="onChange">+</view>
+</view>

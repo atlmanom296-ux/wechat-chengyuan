@@ -1,0 +1,14 @@
+<view class="card {{soldOut ? 'is-soldout' : ''}}" bindtap="onOpen">
+  <view class="card__media">
+    <image class="card__img" src="{{cover}}" mode="aspectFit" lazy-load />
+    <view class="card__badge cx-badge cx-badge--accent" wx:if="{{badge && !soldOut}}">{{badge}}</view>
+    <view class="card__soldout" wx:if="{{soldOut}}">售罄</view>
+  </view>
+  <view class="card__body">
+    <text class="card__name">{{name}}</text>
+    <text class="card__meta">{{category}} · {{sku}}</text>
+    <view class="card__row">
+      <price-tag amount="{{price}}" compare-at="{{compareAtPrice}}" size="sm" />
+    </view>
+  </view>
+</view>

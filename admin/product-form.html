@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>编辑商品 · 澄选后台</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <div class="cx-admin">
+    <aside class="cx-admin__sidebar">
+      <div class="cx-admin__brand">
+        <img src="/assets/logo-mark.svg" alt="" />
+        <div>澄选后台<span>ChengXuan Admin</span></div>
+      </div>
+      <nav class="cx-admin__nav" aria-label="后台导航">
+        <a href="/admin/products.html" class="is-active">商品管理</a>
+        <a href="#" class="is-disabled">订单（占位）</a>
+        <a href="#" class="is-disabled">设置（占位）</a>
+        <a href="/storefront/list.html">查看前台 →</a>
+      </nav>
+    </aside>
+
+    <div class="cx-admin__main">
+      <header class="cx-admin__topbar">
+        <div class="cx-admin__topbar-title" id="topbar-title">商品 / 编辑</div>
+        <div class="cx-admin__user">
+          <span class="cx-admin__avatar">管</span>
+          管理员
+        </div>
+      </header>
+
+      <div class="cx-admin__content">
+        <div class="cx-page-header">
+          <div>
+            <nav class="cx-breadcrumb" aria-label="面包屑">
+              <a href="/admin/products.html">商品管理</a>
+              <span class="cx-breadcrumb__sep">/</span>
+              <span id="crumb-action">编辑商品</span>
+            </nav>
+            <h1 id="page-title">编辑商品</h1>
+            <p id="page-sub">加载中…</p>
+          </div>
+        </div>
+
+        <form class="cx-form" id="product-form">
+          <section class="cx-form-section">
+            <h2>基本信息</h2>
+            <p class="cx-form-section__desc">名称、分类与对外描述。</p>
+            <div class="cx-form-grid">
+              <div class="cx-field cx-field--full">
+                <label for="name">商品名称 <span class="req">*</span></label>
+                <input id="name" name="name" type="text" required />
+              </div>
+              <div class="cx-field">
+                <label for="sku">SKU</label>
+                <input id="sku" name="sku" type="text" class="cx-mono" placeholder="CX-HM-001" />
+                <span class="cx-field__hint">唯一编码，建议 CX-分类-序号</span>
+              </div>
+              <div class="cx-field">
+                <label for="category">分类 <span class="req">*</span></label>
+                <select id="category" name="category" required>
+                  <option value="家居">家居</option>
+                  <option value="个护">个护</option>
+                  <option value="数码">数码</option>
+                  <option value="服饰">服饰</option>
+                  <option value="食品">食品</option>
+                </select>
+              </div>
+              <div class="cx-field cx-field--full">
+                <label for="desc">商品描述</label>
+                <textarea id="desc" name="description" rows="4"></textarea>
+              </div>
+              <div class="cx-field cx-field--full">
+                <label for="badge">营销标签</label>
+                <input id="badge" name="badge" type="text" placeholder="如：热卖、新品、限时" />
+              </div>
+            </div>
+          </section>
+
+          <section class="cx-form-section">
+            <h2>价格与库存</h2>
+            <p class="cx-form-section__desc">金额单位 CNY；库存为可售数量。</p>
+            <div class="cx-form-grid">
+              <div class="cx-field">
+                <label for="price">售价 (¥) <span class="req">*</span></label>
+                <input id="price" name="price" type="number" min="0" step="0.01" required />
+              </div>
+              <div class="cx-field">
+                <label for="compare">划线价 (¥)</label>
+                <input id="compare" name="compare_at_price" type="number" min="0" step="0.01" />
+              </div>
+              <div class="cx-field">
+                <label for="stock">库存 <span class="req">*</span></label>
+                <input id="stock" name="stock" type="number" min="0" step="1" required />
+              </div>
+            </div>
+          </section>
+
+          <section class="cx-form-section">
+            <h2>媒体</h2>
+            <p class="cx-form-section__desc">封面图 URL（本期不接上传）。</p>
+            <div class="cx-field cx-field--full">
+              <label for="image_url">封面 image_url / cover</label>
+              <input id="image_url" name="image_url" type="url" placeholder="/assets/placeholders/mug.svg 或 https://…" />
+              <span class="cx-field__hint">对应 DESIGN cover → API image_url</span>
+            </div>
+            <div class="cx-upload__preview" id="cover-preview" style="margin-top:12px;">
+              <img id="cover-img" src="/assets/placeholders/mug.svg" alt="封面预览" />
+            </div>
+          </section>
+
+          <section class="cx-form-section">
+            <h2>状态</h2>
+            <p class="cx-form-section__desc">控制前台是否可见（active ↔ is_published）。</p>
+            <label class="cx-switch">
+              <input type="checkbox" id="is_published" />
+              <span class="cx-switch__track" aria-hidden="true"></span>
+              上架销售（active）
+            </label>
+          </section>
+
+          <p id="form-error" class="cx-field__error" style="display:none;margin:0 0 12px;"></p>
+
+          <div class="cx-form-actions">
+            <a class="cx-btn cx-btn--secondary" href="/admin/products.html">取消</a>
+            <button type="submit" class="cx-btn cx-btn--primary">保存商品</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script>
+    (function () {
+      if (!CX.requireAdmin()) return;
+      var id = CX.qs("id");
+      var isNew = !id;
+      document.getElementById("page-title").textContent = isNew ? "新建商品" : "编辑商品";
+      document.getElementById("crumb-action").textContent = isNew ? "新建商品" : "编辑商品";
+      document.getElementById("topbar-title").textContent = isNew ? "商品 / 新建" : "商品 / 编辑";
+      document.title = (isNew ? "新建商品" : "编辑商品") + " · 澄选后台";
+
+      var imgInput = document.getElementById("image_url");
+      var coverImg = document.getElementById("cover-img");
+      function syncPreview() {
+        coverImg.src = imgInput.value.trim() || "/assets/placeholders/mug.svg";
+      }
+      imgInput.addEventListener("input", syncPreview);
+
+      async function load() {
+        if (isNew) {
+          document.getElementById("page-sub").textContent = "创建新商品；保存后可在列表中上架。";
+          document.getElementById("is_published").checked = false;
+          return;
+        }
+        try {
+          var all = await CX.api("/api/admin/products", { auth: true });
+          var p = all.find(function (x) { return String(x.id) === String(id); });
+          if (!p) throw new Error("商品不存在");
+          document.getElementById("page-sub").textContent =
+            (p.sku ? "SKU " + p.sku + " · " : "") + "ID " + p.id;
+          document.getElementById("name").value = p.name || "";
+          document.getElementById("sku").value = p.sku || "";
+          document.getElementById("category").value = p.category || "家居";
+          document.getElementById("desc").value = p.description || "";
+          document.getElementById("badge").value = p.badge || "";
+          document.getElementById("price").value = p.price;
+          document.getElementById("compare").value = p.compare_at_price != null ? p.compare_at_price : "";
+          document.getElementById("stock").value = p.stock;
+          document.getElementById("image_url").value = p.image_url || "";
+          document.getElementById("is_published").checked = !!p.is_published;
+          syncPreview();
+        } catch (e) {
+          if (e.status === 401) { CX.setToken(null); CX.requireAdmin(); return; }
+          document.getElementById("page-sub").textContent = "加载失败：" + e.message;
+        }
+      }
+
+      document.getElementById("product-form").addEventListener("submit", async function (ev) {
+        ev.preventDefault();
+        var err = document.getElementById("form-error");
+        err.style.display = "none";
+        var compareVal = document.getElementById("compare").value;
+        var body = {
+          name: document.getElementById("name").value.trim(),
+          sku: document.getElementById("sku").value.trim() || null,
+          category: document.getElementById("category").value,
+          description: document.getElementById("desc").value.trim() || null,
+          badge: document.getElementById("badge").value.trim() || null,
+          price: Number(document.getElementById("price").value),
+          compare_at_price: compareVal === "" ? null : Number(compareVal),
+          stock: Number(document.getElementById("stock").value),
+          image_url: document.getElementById("image_url").value.trim() || null,
+          is_published: document.getElementById("is_published").checked,
+        };
+        try {
+          if (isNew) {
+            await CX.api("/api/admin/products", { method: "POST", auth: true, body: body });
+          } else {
+            await CX.api("/api/admin/products/" + id, { method: "PUT", auth: true, body: body });
+          }
+          location.href = "/admin/products.html";
+        } catch (e) {
+          err.textContent = e.message;
+          err.style.display = "block";
+        }
+      });
+
+      load();
+    })();
+  </script>
+</body>
+</html>

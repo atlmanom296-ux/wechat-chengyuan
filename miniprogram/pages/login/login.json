@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "澄选",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "brand-mark": "/components/brand-mark/brand-mark"
+  }
+}

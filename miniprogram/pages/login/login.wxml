@@ -1,0 +1,34 @@
+<view class="login cx-page">
+  <view class="login__hero">
+    <brand-mark size="lg" show-tagline="{{true}}" />
+    <text class="login__sub">微信小程序壳 · 登录仅为示意</text>
+  </view>
+
+  <view class="login__card">
+    <view class="login__field">
+      <text class="login__label">手机号（示意）</text>
+      <input
+        class="login__input"
+        type="number"
+        maxlength="11"
+        placeholder="请输入手机号"
+        placeholder-class="login__ph"
+        value="{{phone}}"
+        bindinput="onPhone"
+      />
+    </view>
+
+    <button class="cx-btn cx-btn--primary cx-btn--block cx-btn--lg" bindtap="onWxLogin">
+      微信一键登录（占位）
+    </button>
+    <button class="cx-btn cx-btn--ghost cx-btn--block" bindtap="onSkip">
+      先逛逛商品
+    </button>
+
+    <text class="login__hint">本期不做真实鉴权 / 支付 / 订单。SamCode 可替换为 wx.login + 后端会话。</text>
+  </view>
+
+  <view class="login__footer cx-safe-bottom">
+    <text>澄选 ChengXuan</text>
+  </view>
+</view>

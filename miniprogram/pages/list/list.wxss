@@ -1,0 +1,84 @@
+.list__search {
+  padding: 24rpx 32rpx 8rpx;
+  background: #FFFFFF;
+  border-bottom: 2rpx solid #E5E5E0;
+}
+
+.list__search-box {
+  height: 72rpx;
+  background: #F0F0ED;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 24rpx;
+  gap: 12rpx;
+}
+
+.list__search-icon {
+  color: #9A9A90;
+  font-size: 32rpx;
+}
+
+.list__search-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #1A1A18;
+}
+
+.list__ph { color: #9A9A90; }
+
+.list__clear {
+  font-size: 24rpx;
+  color: #0F766E;
+  padding: 8rpx;
+}
+
+.list__filters {
+  padding: 24rpx 32rpx 8rpx;
+  background: #FFFFFF;
+}
+
+.list__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 32rpx 8rpx;
+}
+
+.list__count {
+  font-size: 24rpx;
+  color: #6B6B63;
+}
+
+.list__sorts {
+  display: flex;
+  gap: 20rpx;
+}
+
+.list__sort {
+  font-size: 24rpx;
+  color: #6B6B63;
+}
+
+.list__sort.is-active {
+  color: #0F766E;
+  font-weight: 600;
+}
+
+.list__grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16rpx 24rpx 32rpx;
+  gap: 20rpx;
+}
+
+.list__cell {
+  width: calc(50% - 10rpx);
+}
+
+.list__foot {
+  text-align: center;
+  font-size: 22rpx;
+  color: #9A9A90;
+  padding: 16rpx 32rpx 48rpx;
+}

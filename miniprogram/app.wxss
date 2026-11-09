@@ -1,0 +1,151 @@
+/**
+ * 澄选 ChengXuan — 全局样式（UI-PRO 壳）
+ * Token 对齐 MINIPROGRAM_DESIGN.md / utils/tokens.js
+ * 约定：设计稿 375pt，1px ≈ 2rpx
+ */
+page {
+  --color-bg: #F7F7F5;
+  --color-surface: #FFFFFF;
+  --color-surface-muted: #F0F0ED;
+  --color-border: #E5E5E0;
+  --color-border-strong: #D0D0C8;
+  --color-text: #1A1A18;
+  --color-text-secondary: #6B6B63;
+  --color-text-muted: #9A9A90;
+  --color-accent: #0F766E;
+  --color-accent-hover: #0D9488;
+  --color-accent-soft: #CCFBF1;
+  --color-accent-ink: #134E4A;
+  --color-price: #C2410C;
+  --color-danger: #DC2626;
+  --color-warning: #D97706;
+  --color-success: #16A34A;
+  --radius-sm: 12rpx;
+  --radius-md: 20rpx;
+  --radius-lg: 28rpx;
+  --radius-xl: 40rpx;
+  --space-2: 16rpx;
+  --space-4: 32rpx;
+
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 28rpx;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+view, text, image, button, input {
+  box-sizing: border-box;
+}
+
+.cx-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.cx-safe-bottom {
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+}
+
+/* Buttons */
+.cx-btn {
+  margin: 0;
+  padding: 0 32rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border-radius: 999rpx;
+  border: 2rpx solid transparent;
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+}
+
+.cx-btn::after {
+  border: none;
+}
+
+.cx-btn--primary {
+  background: var(--color-accent);
+  color: #FFFFFF;
+}
+
+.cx-btn--secondary {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-ink);
+}
+
+.cx-btn--ghost {
+  background: transparent;
+  color: var(--color-accent);
+  border-color: var(--color-border-strong);
+}
+
+.cx-btn--block {
+  display: block;
+  width: 100%;
+}
+
+.cx-btn--lg {
+  height: 96rpx;
+  line-height: 96rpx;
+  font-size: 30rpx;
+}
+
+.cx-btn[disabled],
+.cx-btn.is-disabled {
+  opacity: 0.45;
+}
+
+/* Badge */
+.cx-badge {
+  display: inline-block;
+  font-size: 20rpx;
+  line-height: 1.2;
+  padding: 6rpx 12rpx;
+  border-radius: 8rpx;
+  background: var(--color-surface-muted);
+  color: var(--color-text-secondary);
+}
+
+.cx-badge--accent {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-ink);
+}
+
+.cx-badge--warning {
+  background: #FEF3C7;
+  color: var(--color-warning);
+}
+
+.cx-badge--danger {
+  background: #FEE2E2;
+  color: var(--color-danger);
+}
+
+/* Empty */
+.cx-empty {
+  padding: 120rpx 48rpx;
+  text-align: center;
+}
+
+.cx-empty__title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 12rpx;
+}
+
+.cx-empty__desc {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+}
+
+.cx-muted {
+  color: var(--color-text-secondary);
+}
+
+.cx-price {
+  color: var(--color-price);
+  font-weight: 600;
+}

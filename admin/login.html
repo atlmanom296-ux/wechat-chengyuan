@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>登录 · 澄选后台</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    .cx-login {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: var(--color-bg);
+    }
+    .cx-login__card {
+      width: 100%;
+      max-width: 400px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: 32px 28px;
+    }
+    .cx-login__brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 18px;
+    }
+    .cx-login__brand img { width: 32px; height: 32px; }
+    .cx-login__sub {
+      color: var(--color-text-secondary);
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+    .cx-login .cx-field { margin-bottom: 14px; }
+    .cx-login .cx-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .cx-login .cx-field input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface);
+      font: inherit;
+    }
+    .cx-login .cx-field input:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      box-shadow: var(--shadow-focus);
+    }
+    .cx-login__error {
+      color: var(--color-danger);
+      font-size: 13px;
+      margin: 8px 0 0;
+      display: none;
+    }
+    .cx-login__error.is-visible { display: block; }
+    .cx-login__actions { margin-top: 20px; display: grid; gap: 10px; }
+    .cx-login__hint {
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--color-text-muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="cx-login">
+    <div class="cx-login__card">
+      <div class="cx-login__brand">
+        <img src="/assets/logo-mark.svg" alt="" />
+        澄选后台
+      </div>
+      <p class="cx-login__sub">管理员登录 · ChengXuan Admin</p>
+      <form id="login-form" autocomplete="on">
+        <div class="cx-field">
+          <label for="username">用户名</label>
+          <input id="username" name="username" required autocomplete="username" />
+        </div>
+        <div class="cx-field">
+          <label for="password">密码</label>
+          <input id="password" name="password" type="password" required autocomplete="current-password" />
+        </div>
+        <p id="login-error" class="cx-login__error" role="alert"></p>
+        <div class="cx-login__actions">
+          <button type="submit" class="cx-btn cx-btn--primary" style="width:100%;justify-content:center;">登录</button>
+          <a class="cx-btn cx-btn--ghost" href="/storefront/list.html" style="width:100%;justify-content:center;">返回前台</a>
+        </div>
+      </form>
+      <p class="cx-login__hint">默认占位账号见 .env.example（admin / change-me-please）</p>
+    </div>
+  </div>
+  <script src="/assets/js/api.js"></script>
+  <script>
+    (function () {
+      if (CX.getToken()) {
+        var next = CX.qs("next") || "/admin/products.html";
+        location.replace(next);
+        return;
+      }
+      document.getElementById("login-form").addEventListener("submit", async function (ev) {
+        ev.preventDefault();
+        var err = document.getElementById("login-error");
+        err.classList.remove("is-visible");
+        try {
+          var data = await CX.api("/api/auth/login", {
+            method: "POST",
+            body: {
+              username: document.getElementById("username").value.trim(),
+              password: document.getElementById("password").value,
+            },
+          });
+          CX.setToken(data.access_token);
+          location.replace(CX.qs("next") || "/admin/products.html");
+        } catch (e) {
+          err.textContent = e.message || "登录失败";
+          err.classList.add("is-visible");
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
